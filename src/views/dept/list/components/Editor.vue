@@ -15,30 +15,45 @@
       label-width="100px"
       size="medium"
     >
-      <el-form-item label="账号" prop="username">
-        <el-input v-model="formData.username" />
-        <div class="formTips"><i class="icon el-icon-info" />这是一条提示</div>
-      </el-form-item>
-      <el-form-item label="手机号" prop="mobile">
-        <el-input v-model="formData.mobile" />
+      <el-form-item label="部门名称" prop="name">
+        <el-input v-model="formData.name" />
       </el-form-item>
     </el-form>
 
     <!-- footer -->
     <div slot="footer">
-      <el-button size="medium" @click="visible = false">取 消</el-button>
+      <el-button
+        size="medium"
+        @click="visible = false"
+      >
+        取 消
+      </el-button>
       <template v-if="type === 'create'">
-        <el-button size="medium" type="primary" :loading="submitLoading" @click="submitForm">创 建</el-button>
+        <el-button
+          size="medium"
+          type="primary"
+          :loading="submitLoading"
+          @click="submitForm"
+        >
+          创 建
+        </el-button>
       </template>
       <template v-if="type === 'update'">
-        <el-button size="medium" type="primary" :loading="submitLoading" @click="submitForm">保 存</el-button>
+        <el-button
+          size="medium"
+          type="primary"
+          :loading="submitLoading"
+          @click="submitForm"
+        >
+          保 存
+        </el-button>
       </template>
     </div>
   </el-dialog>
 </template>
 
 <script>
-import { fetchItem, createItem, updateItem } from '@/api/example/list'
+import { fetchItem, createItem, updateItem } from '@/api/dept/list'
 
 export default {
   name: 'Editor',
@@ -48,34 +63,21 @@ export default {
       type: 'create', // create 创建， update 编辑
       formData: this.defaultForm(),
       formRules: {
-        username: [
-          { required: true, message: '请输入账号', trigger: 'blur' }
+        name: [
+          { required: true, message: '请输入部门名称', trigger: 'change' }
         ]
       },
       submitLoading: false,
+      itemData: null,
       itemLoading: false
     }
   },
   methods: {
-    // 显示弹窗
-    async showDialog(item) {
-      if (item) {
-        this.type = 'update'
-        const itemData = await this.getItem(item.id)
-        const formData = {}
-        for (const key in this.formData) {
-          formData[key] = itemData[key]
-        }
-        this.formData = formData
-      } else {
-        this.type = 'create'
-      }
-      this.visible = true
-    },
-    // 处理 input 为空的情况
-    handleInputBlur(key, value) {
-      if (!value) {
-        this.formData[key] = 0
+    // 默认表单
+    defaultForm() {
+      return {
+        id: null,
+        name: ''
       }
     },
     // 重置表单
@@ -85,17 +87,33 @@ export default {
         this.$refs['form'].clearValidate()
       })
     },
-    // 默认表单
-    defaultForm() {
-      return {
-        title: '',
-        free_amount: 0,
-        is_free: 0,
-        type: 1,
-        once_amount: 0,
-        unit: 0,
-        base_amount: 0,
-        second_amount: 0
+    // 显示弹窗
+    async open(item) {
+      this.visible = true
+      if (item) {
+        this.type = 'update'
+        await this.getItem(item.id)
+        const formData = {}
+        for (const key in this.formData) {
+          if (this.itemData[key] !== undefined) {
+            formData[key] = this.itemData[key]
+          }
+        }
+        this.formData = { ...this.formData, ...formData }
+      } else {
+        this.type = 'create'
+      }
+    },
+    // 获取单个详情
+    async getItem(id) {
+      this.itemLoading = true
+      try {
+        const res = await fetchItem(id)
+        this.itemData = res.data
+      } catch (error) {
+        console.log(error)
+      } finally {
+        this.itemLoading = false
       }
     },
     // 提交表单
@@ -129,7 +147,7 @@ export default {
     async handleUpdate() {
       this.submitLoading = true
       try {
-        await updateItem(this.formData.id, this.formData)
+        await updateItem(this.formData)
         this.visible = false
         this.$emit('change')
         this.$message.success('保存成功')
@@ -138,23 +156,7 @@ export default {
       } finally {
         this.submitLoading = false
       }
-    },
-    // 获取单个详情
-    async getItem(id) {
-      this.itemLoading = true
-      try {
-        return await fetchItem(id)
-      } catch (error) {
-        console.log(error)
-      } finally {
-        this.itemLoading = false
-      }
     }
   }
 }
 </script>
-
-<style scoped>
-  .formTips { margin-top: 5px; line-height: 1.5; font-size: 12px; color: #909399; }
-  .formTips .icon { margin-right: 4px; }
-</style>

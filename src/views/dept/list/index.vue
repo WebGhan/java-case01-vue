@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import { fetchList } from '@/api/dept/list'
+import { fetchList, deleteItem } from '@/api/dept/list'
 import { Editor, MenuBar } from './components'
 
 export default {
@@ -57,7 +57,7 @@ export default {
   methods: {
     // 显示编辑
     showEditor(item) {
-      this.$refs['editor'].showDialog(item)
+      this.$refs['editor'].open(item)
     },
     // 获取列表
     async getList() {
@@ -81,6 +81,26 @@ export default {
       this.listQuery = { ...this.listQuery, ...filterForm }
       this.getList()
       this.$refs.table.bodyWrapper.scrollTop = 0
+    },
+    // 处理删除
+    async handleDelete(id) {
+      if (this.deleteLoading) { return }
+      this.deleteLoading = id
+      try {
+        const confirm = await this.$confirm(
+          '确定要删除吗?',
+          '提示',
+          { type: 'warning' }
+        )
+        if (confirm !== 'confirm') { return }
+        await deleteItem(id)
+        this.getList()
+        this.$message.success('删除成功')
+      } catch (error) {
+        console.log(error)
+      } finally {
+        this.deleteLoading = 0
+      }
     }
   }
 }
