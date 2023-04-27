@@ -21,6 +21,7 @@
 import Logo from './Logo'
 import SidebarItem from './SidebarItem'
 import variables from '@/styles/variables.scss'
+import { constantRoutes } from '@/router'
 
 export default {
   components: { SidebarItem, Logo },
@@ -29,7 +30,8 @@ export default {
       return this.$store.state.app.sidebar
     },
     routes() {
-      return this.$store.state.permission.routes
+      // return this.$store.state.permission.routes
+      return constantRoutes
     },
     activeMenu() {
       const route = this.$route
