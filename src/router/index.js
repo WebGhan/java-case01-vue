@@ -8,6 +8,7 @@ import Layout from '@/layout'
 
 /* Router Modules */
 import DeptRouter from '@/router/modules/dept'
+import EmpRouter from '@/router/modules/emp'
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -58,7 +59,8 @@ export const constantRoutes = [
     }]
   },
 
-  DeptRouter
+  DeptRouter,
+  EmpRouter
 ]
 
 export const asyncRoutes = [

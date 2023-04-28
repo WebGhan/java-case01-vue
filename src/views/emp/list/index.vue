@@ -1,7 +1,11 @@
 <template>
   <div class="g-app-container-flex">
     <!-- 菜单栏 -->
-    <MenuBar class="menu-bar" :filter-loading="listLoading" @filter="handleFilter" @create="showEditor(false)" />
+    <MenuBar
+      :filter-loading="listLoading"
+      @filter="handleFilter"
+      @create="openEditor(false)"
+    />
 
     <!-- 列表 -->
     <el-table
@@ -13,39 +17,75 @@
       style="width: 100%;"
       border
     >
-      <el-table-column label="ID" prop="id" width="100" />
+      <el-table-column label="ID" prop="id" width="80" />
       <el-table-column label="名称" prop="name" width="200" />
+      <el-table-column label="性别" prop="gender" width="100">
+        <template slot-scope="scope">
+          {{ scope.row.gender === 1 ? '男' : '女' }}
+        </template>
+      </el-table-column>
+      <el-table-column label="入职日期" prop="entrydate" width="120" />
       <el-table-column label="创建时间" prop="createTime" width="180" />
       <el-table-column label="更新时间" prop="updateTime" width="180" />
 
       <el-table-column label="操作" min-width="160" fixed="right">
         <template slot-scope="scope">
-          <el-button type="primary" size="mini" @click="showEditor(scope.row)">编辑</el-button>
-          <el-button type="danger" size="mini" :loading="deleteLoading === scope.row.id" @click="handleDelete(scope.row.id)">删除</el-button>
+          <el-button
+            type="primary"
+            size="mini"
+            @click="openEditor(scope.row)"
+          >
+            编辑
+          </el-button>
+          <el-button
+            type="danger"
+            size="mini"
+            :loading="deleteLoading === scope.row.id"
+            @click="handleDelete(scope.row.id)"
+          >
+            删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
 
+    <!-- 列表分页 -->
+    <Pagination
+      :total="listTotal"
+      :page-size.sync="listQuery.pageSize"
+      :current-page.sync="listQuery.page"
+      @change="pageChange"
+    />
+
     <!-- 编辑 -->
-    <Editor ref="editor" @change="getList" />
+    <Editor
+      ref="Editor"
+      @change="getList"
+    />
   </div>
 </template>
 
 <script>
-import { fetchList, deleteItem } from '@/api/dept/list'
+import { fetchList, deleteItem } from '@/api/emp/list'
 import { Editor, MenuBar } from './components'
+import { Pagination } from '@/components'
 
 export default {
-  name: 'DeptList',
+  name: 'EmpList',
   components: {
     Editor,
-    MenuBar
+    MenuBar,
+    Pagination
   },
   data() {
     return {
       list: [],
       listLoading: false,
-      listQuery: {},
+      listTotal: 0,
+      listQuery: {
+        page: 1,
+        pageSize: 10
+      },
       deleteLoading: 0
     }
   },
@@ -53,16 +93,17 @@ export default {
     this.getList()
   },
   methods: {
-    // 显示编辑
-    showEditor(item) {
-      this.$refs['editor'].open(item)
+    // 打开编辑
+    openEditor(item) {
+      this.$refs['Editor'].open(item)
     },
     // 获取列表
     async getList() {
       this.listLoading = true
       try {
         const res = await fetchList(this.listQuery)
-        this.list = res.data
+        this.list = res.data.rows
+        this.listTotal = res.data.total
       } catch (error) {
         console.log(error)
       } finally {
@@ -77,6 +118,7 @@ export default {
     // 处理筛选
     handleFilter(filterForm) {
       this.listQuery = { ...this.listQuery, ...filterForm }
+      this.listQuery.page = 1
       this.getList()
       this.$refs.table.bodyWrapper.scrollTop = 0
     },
