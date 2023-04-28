@@ -6,9 +6,9 @@
       size="mini"
       @submit.native.prevent
     >
-      <el-form-item label="标题">
+      <el-form-item label="姓名">
         <el-input
-          v-model="filterForm.title"
+          v-model="filterForm.name"
           clearable
           @keyup.enter.native="handleFilter"
         />
@@ -26,6 +26,17 @@
             :value="item.value"
           />
         </el-select>
+      </el-form-item>
+      <el-form-item label="入职日期">
+        <el-date-picker
+          v-model="entryDate"
+          type="daterange"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          value-format="yyyy-MM-dd"
+          @change="handleEntryDate"
+        />
       </el-form-item>
       <el-form-item>
         <el-button
@@ -64,9 +75,12 @@ export default {
   data() {
     return {
       filterForm: {
-        title: '',
-        gender: ''
+        name: '',
+        gender: null,
+        begin: null,
+        end: null
       },
+      entryDate: null,
       genderOptions: [
         { label: '男', value: 1 },
         { label: '女', value: 2 }
@@ -81,6 +95,11 @@ export default {
     // 创建
     handleCreate() {
       this.$emit('create')
+    },
+    // 处理入职日期数据
+    handleEntryDate() {
+      this.filterForm.begin = this.entryDate ? this.entryDate[0] : null
+      this.filterForm.end = this.entryDate ? this.entryDate[1] : null
     }
   }
 }

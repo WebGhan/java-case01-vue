@@ -17,6 +17,10 @@
       style="width: 100%;"
       border
     >
+      <el-table-column
+        type="selection"
+        width="40"
+      />
       <el-table-column label="ID" prop="id" width="80" />
       <el-table-column label="名称" prop="name" width="200" />
       <el-table-column label="性别" prop="gender" width="100">

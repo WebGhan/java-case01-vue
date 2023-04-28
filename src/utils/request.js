@@ -3,6 +3,7 @@ import { MessageBox, Message } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
 import router from '@/router'
+import Qs from 'qs'
 
 let isRefreshing = false // 否正在刷新token
 let retryRequests = [] // 刷新token后，承载需要重新请求的队列
@@ -11,6 +12,9 @@ let retryRequests = [] // 刷新token后，承载需要重新请求的队列
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
+  paramsSerializer: (params) => {
+    return Qs.stringify(params, { arrayFormat: 'repeat' })
+  },
   timeout: 60000 // request timeout
 })
 
