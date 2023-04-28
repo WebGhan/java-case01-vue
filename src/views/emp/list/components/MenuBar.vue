@@ -57,6 +57,15 @@
           添加
         </el-button>
       </el-form-item>
+      <el-form-item>
+        <el-button
+          icon="el-icon-delete"
+          type="danger"
+          @click="handleDelete"
+        >
+          批量删除
+        </el-button>
+      </el-form-item>
     </el-form>
   </div>
 </template>
@@ -100,6 +109,10 @@ export default {
     handleEntryDate() {
       this.filterForm.begin = this.entryDate ? this.entryDate[0] : null
       this.filterForm.end = this.entryDate ? this.entryDate[1] : null
+    },
+    // 处理批量删除
+    handleDelete() {
+      this.$emit('delete')
     }
   }
 }

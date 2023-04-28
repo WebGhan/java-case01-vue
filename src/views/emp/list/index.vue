@@ -5,6 +5,7 @@
       :filter-loading="listLoading"
       @filter="handleFilter"
       @create="openEditor(false)"
+      @delete="handleBatchDelete"
     />
 
     <!-- 列表 -->
@@ -16,6 +17,7 @@
       height="auto"
       style="width: 100%;"
       border
+      @selection-change="handleSelectionChange"
     >
       <el-table-column
         type="selection"
@@ -90,7 +92,8 @@ export default {
         page: 1,
         pageSize: 10
       },
-      deleteLoading: 0
+      deleteLoading: 0,
+      selected: []
     }
   },
   created() {
@@ -145,6 +148,15 @@ export default {
       } finally {
         this.deleteLoading = 0
       }
+    },
+    // 处理批量删除
+    handleBatchDelete() {
+      const ids = this.selected.join(',')
+      this.handleDelete(ids)
+    },
+    // 处理列表选择
+    handleSelectionChange(e) {
+      this.selected = e.map(i => i.id)
     }
   }
 }
