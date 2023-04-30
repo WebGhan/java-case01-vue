@@ -15,8 +15,33 @@
       label-width="100px"
       size="medium"
     >
-      <el-form-item label="标题" prop="title">
-        <el-input v-model="formData.title" />
+      <el-form-item label="用户名" prop="username">
+        <el-input v-model="formData.username" />
+      </el-form-item>
+      <el-form-item label="员工姓名" prop="name">
+        <el-input v-model="formData.name" />
+      </el-form-item>
+      <el-form-item label="性别" prop="gender">
+        <el-select
+          v-model="formData.gender"
+          clearable
+          placeholder="请选择"
+        >
+          <el-option
+            v-for="item in genderOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="入职日期" prop="entrydate">
+        <el-date-picker
+          v-model="formData.entrydate"
+          type="date"
+          placeholder="选择日期"
+          value-format="yyyy-MM-dd"
+        />
       </el-form-item>
     </el-form>
 
@@ -63,20 +88,37 @@ export default {
       type: 'create', // create 创建， update 编辑
       formData: this.defaultForm(),
       formRules: {
-        title: [
-          { required: true, message: '请输入标题', trigger: 'change' }
+        username: [
+          { required: true, message: '请输入用户名', trigger: 'change' }
+        ],
+        name: [
+          { required: true, message: '请输入员工姓名', trigger: 'change' }
+        ],
+        gender: [
+          { required: true, message: '请选择性别', trigger: 'change' }
+        ],
+        entrydate: [
+          { required: true, message: '请选择入职时间', trigger: 'change' }
         ]
       },
       submitLoading: false,
       itemData: null,
-      itemLoading: false
+      itemLoading: false,
+      genderOptions: [
+        { label: '男', value: 1 },
+        { label: '女', value: 2 }
+      ]
     }
   },
   methods: {
     // 默认表单
     defaultForm() {
       return {
-        title: ''
+        id: null,
+        username: '',
+        name: '',
+        gender: null,
+        entrydate: ''
       }
     },
     // 重置表单
@@ -146,7 +188,7 @@ export default {
     async handleUpdate() {
       this.submitLoading = true
       try {
-        await updateItem(this.itemData.id, this.formData)
+        await updateItem(this.formData)
         this.visible = false
         this.$emit('change')
         this.$message.success('保存成功')
