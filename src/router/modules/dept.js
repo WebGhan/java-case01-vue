@@ -7,7 +7,7 @@ const DeptRouter = {
   component: Layout,
   meta: {
     title: '部门管理',
-    icon: 'el-icon-user'
+    icon: 'el-icon-office-building'
   },
   children: [
     {

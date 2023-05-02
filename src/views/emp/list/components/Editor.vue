@@ -35,6 +35,9 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="员工照片" prop="iamge">
+        <AvatarUpload v-model="formData.image" />
+      </el-form-item>
       <el-form-item label="入职日期" prop="entrydate">
         <el-date-picker
           v-model="formData.entrydate"
@@ -79,9 +82,13 @@
 
 <script>
 import { fetchItem, createItem, updateItem } from '@/api/emp/list'
+import { AvatarUpload } from '@/components'
 
 export default {
   name: 'Editor',
+  components: {
+    AvatarUpload
+  },
   data() {
     return {
       visible: false,
@@ -118,6 +125,7 @@ export default {
         username: '',
         name: '',
         gender: null,
+        image: '',
         entrydate: ''
       }
     },

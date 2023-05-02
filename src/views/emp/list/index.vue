@@ -30,6 +30,11 @@
           {{ scope.row.gender === 1 ? '男' : '女' }}
         </template>
       </el-table-column>
+      <el-table-column label="照片" prop="image" width="100">
+        <template slot-scope="scope">
+          <el-avatar shape="square" size="medium" :src="scope.row.image" />
+        </template>
+      </el-table-column>
       <el-table-column label="入职日期" prop="entrydate" width="120" />
       <el-table-column label="创建时间" prop="createTime" width="180" />
       <el-table-column label="更新时间" prop="updateTime" width="180" />
