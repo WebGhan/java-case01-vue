@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 登入
 export function login(data) {
   return request({
-    url: '/core/auth/login',
+    url: '/login',
     method: 'POST',
     data
   })
