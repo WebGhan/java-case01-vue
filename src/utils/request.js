@@ -25,7 +25,7 @@ service.interceptors.request.use(
 
     if (store.state.user.token) {
       // let each request carry token
-      config.headers['Authorization'] = 'Bearer ' + getToken()
+      config.headers['token'] = getToken()
     }
     return config
   },
@@ -51,15 +51,15 @@ service.interceptors.response.use(
   response => {
     const res = response.data
 
-    if (response.status >= 200 && response.status < 300) {
+    if (res.code === 1) {
       return res
     } else {
       Message({
-        message: res.message || 'Error',
+        message: res.msg || 'Error',
         type: 'error',
         duration: 5 * 1000
       })
-      return Promise.reject(new Error(res.message || 'Error'))
+      return Promise.reject(new Error(res.msg || 'Error'))
     }
   },
   async error => {

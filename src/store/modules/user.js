@@ -1,10 +1,9 @@
 import { login, logout, fetchUserInfo, refreshToken } from '@/api/user/auth'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 
 const getDefaultState = () => {
   return {
-    token: getToken(),
     userInfo: null
   }
 }
@@ -28,10 +27,9 @@ const actions = {
   login({ commit }, userInfo) {
     return new Promise((resolve, reject) => {
       login(userInfo).then(response => {
-        // const data = response.data
-        console.log(response)
-        // commit('SET_TOKEN', data.token)
-        // setToken(data.token)
+        const token = response.data
+        commit('SET_TOKEN', token)
+        setToken(token)
         resolve(response)
       }).catch(error => {
         reject(error)

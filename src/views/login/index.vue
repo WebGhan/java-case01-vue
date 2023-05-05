@@ -73,7 +73,7 @@ export default {
           this.formLoading = true
           try {
             await this.$store.dispatch('user/login', this.loginForm)
-            // this.$router.push({ path: this.redirect || '/' })
+            this.$router.push({ path: this.redirect || '/' })
           } finally {
             this.formLoading = false
           }
