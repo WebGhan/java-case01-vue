@@ -53,6 +53,10 @@ service.interceptors.response.use(
 
     if (res.code === 1) {
       return res
+    } if (res.msg === 'NOT_LOGIN') {
+      store.dispatch('user/resetToken').then(() => {
+        location.reload()
+      })
     } else {
       Message({
         message: res.msg || 'Error',
