@@ -23,10 +23,9 @@ service.interceptors.request.use(
   config => {
     // do something before request is sent
 
-    if (store.state.user.token) {
-      // let each request carry token
-      config.headers['token'] = getToken()
-    }
+    // let each request carry token
+    config.headers['token'] = getToken()
+
     return config
   },
   error => {
@@ -53,7 +52,7 @@ service.interceptors.response.use(
 
     if (res.code === 1) {
       return res
-    } if (res.msg === 'NOT_LOGIN') {
+    } else if (res.msg === 'NOT_LOGIN') {
       store.dispatch('user/resetToken').then(() => {
         location.reload()
       })
