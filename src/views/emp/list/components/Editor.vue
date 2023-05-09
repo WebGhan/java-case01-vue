@@ -46,6 +46,20 @@
           value-format="yyyy-MM-dd"
         />
       </el-form-item>
+      <el-form-item label="部门" prop="deptId">
+        <el-select
+          v-model="formData.deptId"
+          clearable
+          placeholder="请选择"
+        >
+          <el-option
+            v-for="item in dept"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          />
+        </el-select>
+      </el-form-item>
     </el-form>
 
     <!-- footer -->
@@ -82,6 +96,7 @@
 
 <script>
 import { fetchItem, createItem, updateItem } from '@/api/emp/list'
+import { fetchList as fetchDeptList } from '@/api/dept/list'
 import { AvatarUpload } from '@/components'
 
 export default {
@@ -114,8 +129,12 @@ export default {
       genderOptions: [
         { label: '男', value: 1 },
         { label: '女', value: 2 }
-      ]
+      ],
+      dept: []
     }
+  },
+  mounted() {
+    this.getDeptList()
   },
   methods: {
     // 默认表单
@@ -126,7 +145,8 @@ export default {
         name: '',
         gender: null,
         image: '',
-        entrydate: ''
+        entrydate: '',
+        deptId: null
       }
     },
     // 重置表单
@@ -163,6 +183,15 @@ export default {
         console.log(error)
       } finally {
         this.itemLoading = false
+      }
+    },
+    // 获取部门列表
+    async getDeptList() {
+      try {
+        const res = await fetchDeptList()
+        this.dept = res.data
+      } catch (error) {
+        console.log(error)
       }
     },
     // 提交表单
